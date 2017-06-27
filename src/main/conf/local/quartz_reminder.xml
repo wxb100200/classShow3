@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<quartz xmlns="http://www.opensymphony.com/quartz/JobSchedulingData"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        overwrite-existing-jobs="true">
+
+    <!--测试定时任务-->
+    <job>
+        <job-detail>
+            <name>TestQuartz</name>
+            <group>SYNCHRONY</group>
+            <description>TestQuartz data</description>
+            <job-class>com.hz.school.quartz.TestQuartz</job-class>
+        </job-detail>
+        <trigger>
+            <cron>
+                <name> TestQuartz  job Trigger</name>
+                <group>SYNCHRONY</group>
+                <job-name>TestQuartz Job</job-name>
+                <job-group>SYNCHRONY</job-group>
+                <cron-expression>0 0/1 * * * ?</cron-expression>
+            </cron>
+        </trigger>
+    </job>
+</quartz>
