@@ -139,11 +139,17 @@ public class DateUtil {
     }
 
 
-    private static String formatDate(Long date) {
+    public static String formatDate(Long date) {
         if (date == null) {
             return "";
         }
         return formatDate(new Date(date), C_DATE_PATTON_DEFAULT);
+    }
+    public static String formatDateToSecond(Long date){
+        if (date == null) {
+            return "";
+        }
+        return formatDate(new Date(date), C_TIME_PATTON_DEFAULT);
     }
 
     public static String formatDate(String date) {

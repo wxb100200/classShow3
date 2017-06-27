@@ -1,6 +1,7 @@
 package com.hz.school.api.classbrand_getBzrClassid;
 
 import com.hz.school.model.*;
+import com.hz.school.util.Logger;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -9,7 +10,12 @@ import java.util.List;
  * Created by Administrator on 2017/6/17.
  */
 public class ApiGetBzrClassService {
+    private static Logger log= Logger.getLogger(ApiGetBzrClassService.class);
     public static ApiClassInfo generateData(ClassInfo data){
+        if(data==null){
+            log.error("----->>>>>>>classInfo data is null");
+            return null;
+        }
         ApiClassInfo apiData=new ApiClassInfo();
         apiData.setCampusid(data.getCampusid());
         apiData.setClassInfo(data.getClassInfo());

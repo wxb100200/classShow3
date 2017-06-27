@@ -1,8 +1,10 @@
 package com.hz.school.model;
 
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
+import java.math.BigDecimal;
 
 /**
  * 卡信息表
@@ -20,6 +22,12 @@ public class Card extends BaseEntity{
      */
     private Integer type;
 
+    /**
+     * 卡内余额
+     */
+    @Column(scale = 2)
+    private BigDecimal balance=new BigDecimal(0.00);
+
     public String getCardNo() {
         return cardNo;
     }
@@ -34,5 +42,13 @@ public class Card extends BaseEntity{
 
     public void setType(Integer type) {
         this.type = type;
+    }
+
+    public BigDecimal getBalance() {
+        return balance;
+    }
+
+    public void setBalance(BigDecimal balance) {
+        this.balance = balance;
     }
 }

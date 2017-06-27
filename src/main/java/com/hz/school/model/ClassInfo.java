@@ -44,6 +44,22 @@ public class ClassInfo extends BaseEntity{
     @ManyToOne
     private Xqbm xqbm;
 
+    /**
+     * 学生
+     */
+    @OneToMany(mappedBy = "classInfo")
+    private List<Student> students;
+    /**
+     * 老师
+     */
+    @ManyToMany
+    @JoinTable(name= Constant.DB_PREFIX+"class_info_tea",
+            joinColumns= @JoinColumn(name="class_info_id", referencedColumnName="id"),
+            inverseJoinColumns= @JoinColumn(name="teacher_id", referencedColumnName="id")
+    )
+    private List<Teacher> teachers;
+
+
     public Long getCampusid() {
         return campusid;
     }
@@ -106,5 +122,21 @@ public class ClassInfo extends BaseEntity{
 
     public void setXqbm(Xqbm xqbm) {
         this.xqbm = xqbm;
+    }
+
+    public List<Student> getStudents() {
+        return students;
+    }
+
+    public void setStudents(List<Student> students) {
+        this.students = students;
+    }
+
+    public List<Teacher> getTeachers() {
+        return teachers;
+    }
+
+    public void setTeachers(List<Teacher> teachers) {
+        this.teachers = teachers;
     }
 }

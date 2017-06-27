@@ -19,7 +19,10 @@ public class Teacher extends BaseEntity{
      * 老师、班主任
      */
     private String named;
-
+    /**
+     * 照片
+     */
+    private String iconpath;
     /**
      * 卡
      */
@@ -48,5 +51,13 @@ public class Teacher extends BaseEntity{
 
     public void setCard(Card card) {
         this.card = card;
+    }
+
+    public String getIconpath() {
+        return iconpath;
+    }
+
+    public void setIconpath(String iconpath) {
+        this.iconpath = iconpath;
     }
 }
