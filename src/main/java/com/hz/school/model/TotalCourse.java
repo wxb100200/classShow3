@@ -12,9 +12,32 @@ import javax.persistence.Table;
 @Table(name = Constant.DB_PREFIX+"total_course")
 public class TotalCourse extends BaseEntity {
     /**
+     * 学期
+     */
+    private String termName;
+    /**
+     * 第几周
+     */
+    private Integer numWeek;
+    /**
+     * 班级
+     */
+    @ManyToOne
+    private ClassInfo classInfo;
+    /**
+     * 周几
+     */
+    private Integer weekday;
+    /**
      * 第几节课
      */
     private Integer classNum;
+    /**
+     * 时段
+     * 1：上午；2：下午
+     */
+    @Column(length = 1)
+    private Integer timeInterval;
     /**
      * 课程名称
      */
@@ -34,29 +57,10 @@ public class TotalCourse extends BaseEntity {
     @ManyToOne
     private Teacher teacher;
     /**
-     * 时段
-     * 1：上午；2：下午
-     */
-    @Column(length = 1)
-    private Integer timeInterval;
-    /**
-     * 周几
-     */
-    private Integer weekday;
-
-    /**
-     * 第几周
-     */
-    private Integer numWeek;
-    /**
      * 周信息
      * 可以判断是第几周
      */
     private String weekInfo;
-
-    @ManyToOne
-    private ClassInfo classInfo;
-
     public Integer getClassNum() {
         return classNum;
     }
@@ -135,5 +139,13 @@ public class TotalCourse extends BaseEntity {
 
     public void setNumWeek(Integer numWeek) {
         this.numWeek = numWeek;
+    }
+
+    public String getTermName() {
+        return termName;
+    }
+
+    public void setTermName(String termName) {
+        this.termName = termName;
     }
 }
