@@ -4,7 +4,7 @@
         overwrite-existing-jobs="true">
 
     <!--测试定时任务-->
-    <!--<job>
+    <job>
         <job-detail>
             <name>TestQuartz</name>
             <group>SYNCHRONY</group>
@@ -20,5 +20,5 @@
                 <cron-expression>0 0/1 * * * ?</cron-expression>
             </cron>
         </trigger>
-    </job>-->
+    </job>
 </quartz>

@@ -145,12 +145,6 @@ public class DateUtil {
         }
         return formatDate(new Date(date), C_DATE_PATTON_DEFAULT);
     }
-    public static String formatDateToSecond(Long date){
-        if (date == null) {
-            return "";
-        }
-        return formatDate(new Date(date), C_TIME_PATTON_DEFAULT);
-    }
 
     public static String formatDate(String date) {
         if (StringUtil.isNumber(date)) {
@@ -171,6 +165,12 @@ public class DateUtil {
             return "";
         }
         return formatDate(new Date(date), C_TIME_PATTON_DEFAULT);
+    }
+    public static String formatDateToYear(Date date){
+        if (null == date) {
+            return "";
+        }
+        return formatDate(date, C_DATE_PATTON_YEAR);
     }
 
     /**

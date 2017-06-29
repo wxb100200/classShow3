@@ -37,10 +37,7 @@ import com.hz.school.api.classbrand_getTakeClassStuList.ApiTakeClassStuService;
 import com.hz.school.api.classbrand_getWeather.ApiWeather;
 import com.hz.school.api.classbrand_getWeather.ApiWeatherService;
 import com.hz.school.model.*;
-import com.hz.school.util.DateUtil;
-import com.hz.school.util.EbeanUtil;
-import com.hz.school.util.Logger;
-import com.hz.school.util.StringUtil;
+import com.hz.school.util.*;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -79,9 +76,7 @@ public class ApiController {
         return ApiResult.single("base_getTlisten",apiAccessToken).toSingleJson();
     }
     /**
-     * 通过
      *  二、 设备测试接口网络及获取当前时间情况
-     * 1、主要测试电子班牌和微校通网络是否畅通
      */
     @ResponseBody
     @RequestMapping(value="/classbrand_getServerTime",method= RequestMethod.POST)
@@ -170,7 +165,6 @@ public class ApiController {
         return ApiResult.list("classbrand_changeInfoCmd",apiList).toJson();
     }
     /**
-     * 通过
      *六、 班级学生列表数据接口
      */
     @ResponseBody
@@ -192,7 +186,6 @@ public class ApiController {
         return ApiResult.list("classbrand_getClassStuList",apiStudentList).toJson();
     }
     /**
-     * 通过
      *七、 班级学生考勤列表数据接口
      */
     @ResponseBody
@@ -269,7 +262,6 @@ public class ApiController {
         return ApiResult.list("classbrand_getClassExamInfoList",apiList).toJson();
     }
     /**
-     * 通过
      *十一、 班级学生成绩列表数据接口
      */
     @ResponseBody
@@ -293,7 +285,6 @@ public class ApiController {
         return ApiResult.list("classbrand_getClassStuScoreList",apiList).toJson();
     }
     /**
-     * 通过
      *十二、 班级学校园一卡通列表信息
      */
     @ResponseBody
@@ -431,6 +422,7 @@ public class ApiController {
     }
 
     /**
+     * 没触发
      *十八、 学生留言信息给家长
      */
     @ResponseBody
@@ -499,7 +491,7 @@ public class ApiController {
         String classid=jParams.getString("classid");
         String accessToken=jParams.getString("accessToken");
         log.info("----->>>>>>getClassCourseList classid:"+classid+",accessToken:"+accessToken);
-        List<GoClassCourse> goClassCourseList=EbeanUtil.find(GoClassCourse.class).where().eq("classRoom.classid",classid)
+        List<GoClassCourse> goClassCourseList=EbeanUtil.find(GoClassCourse.class).where().eq("classRoom.classInfo.id",classid)
                 .findList();
         List<ApiTakeClass> apiTakeClassList = ApiTakeClassStuService.generateList(goClassCourseList);
         return ApiResult.list("classbrand_getClassCourseList", apiTakeClassList).toJson();
@@ -510,8 +502,7 @@ public class ApiController {
     private static int judgeWeek() throws ParseException {
         Date date= DateUtil.getCurrent();
         int yearWeek=DateUtil.weekOfYear(date);
-
-        String startDate="2017-02-27";
+        String startDate= SSMConfig.getProperty("oneTermStartTime");
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
         Date date2 = format.parse(startDate);
         int yearWeek2=DateUtil.weekOfYear(date2);

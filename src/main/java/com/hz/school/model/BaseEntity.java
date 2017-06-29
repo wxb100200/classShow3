@@ -30,6 +30,7 @@ public class BaseEntity implements Serializable{
     /**
      * 其他id
      */
+    @Column(unique = true)
    private String refId;
 
     /**

@@ -20,6 +20,7 @@ import java.util.Map;
  */
 public class TotalCourseDao {
     private static Logger log= Logger.getLogger(GoClassCourseDao.class);
+    private static Map<String,TotalCourse> totalCourseMap=(Map<String,TotalCourse>)EbeanUtil.find(TotalCourse.class).where().setMapKey("refId").findMap();
     private static Map<String,ClassInfo> classInfoMap= (Map<String,ClassInfo>) EbeanUtil.find(ClassInfo.class).where().setMapKey("className").findMap();
     private static Map<String,CourseInfo> courseInfoMap=(Map<String,CourseInfo>) EbeanUtil.find(CourseInfo.class).where().setMapKey("courseName").findMap();
     private static Map<String,Teacher> teacherMap=(Map<String,Teacher>) EbeanUtil.find(Teacher.class).where().setMapKey("name").findMap();
@@ -80,20 +81,43 @@ public class TotalCourseDao {
             teacherName=obj2.toString();
         }
         int timeInterval=generateTimeInterval(i);
-        int weekday=generateWeekday(i);
+        int weekday=generateWeekday(i);         //星期几
+        int numWeek=generateNumWeek(sheetName);//第几周
         log.info("---->>>generate data is classNum:"+classNum+",classid:"+classInfo.getId()+",courseName:"+courseName+",teacherName:"+teacherName+",timeInterval:"+timeInterval+",weekday:"+weekday);
-        TotalCourse totalCourse=new TotalCourse();
-        totalCourse.setClassNum(classNum);
-        totalCourse.setClassInfo(classInfo);
-        totalCourse.setCourseName(courseName);
-        totalCourse.setCourse(courseInfoMap.get(courseName));
-        totalCourse.setTeacherName(teacherName);
-        totalCourse.setTeacher(teacherMap.get(teacherName));
-        totalCourse.setTimeInterval(timeInterval);
-        totalCourse.setWeekday(weekday);
-        totalCourse.setNumWeek(generateNumWeek(sheetName));
-        totalCourse.setWeekInfo(sheetName);
-        return totalCourse;
+        String refId=generateRefId(numWeek,classInfo,weekday,classNum);
+        if(totalCourseMap.containsKey(refId)){
+            TotalCourse totalCourse=totalCourseMap.get(refId);
+            String oldCourseName=totalCourse.getCourseName();
+            String oldTeacherName=totalCourse.getTeacherName();
+            if(!oldCourseName.equals(courseName)||!oldTeacherName.equals(teacherName)){
+                totalCourse.setCourseName(courseName);
+                totalCourse.setCourse(courseInfoMap.get(courseName));
+                totalCourse.setTeacherName(teacherName);
+                totalCourse.setTeacher(teacherMap.get(teacherName));
+                return totalCourse;
+            }else{
+                return null;
+            }
+        }else{
+            TotalCourse totalCourse=new TotalCourse();
+            totalCourse.setRefId(refId);
+            totalCourse.setClassNum(classNum);
+            totalCourse.setClassInfo(classInfo);
+            totalCourse.setCourseName(courseName);
+            totalCourse.setCourse(courseInfoMap.get(courseName));
+            totalCourse.setTeacherName(teacherName);
+            totalCourse.setTeacher(teacherMap.get(teacherName));
+            totalCourse.setTimeInterval(timeInterval);
+            totalCourse.setWeekday(weekday);
+            totalCourse.setNumWeek(numWeek);
+            totalCourse.setWeekInfo(sheetName);
+            return totalCourse;
+        }
+
+    }
+    private static String generateRefId(Integer numWeek,ClassInfo classInfo,Integer weekday,Integer classNum){
+        Long classId=classInfo.getId();
+        return numWeek+"-"+classId+"-"+weekday+"-"+classNum;
     }
 
     private static int generateWeekday(int i){

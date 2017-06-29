@@ -57,15 +57,6 @@ public class CourseController {
     @RequestMapping(value = "/uploadTotalCourseExcel")
     public String uploadTotalCourseExcel(HttpServletRequest request,String username,ModelMap model){
         try{
-            Ebean.beginTransaction();
-            Ebean.createSqlQuery("truncate table am_total_course").findUnique();
-            Ebean.commitTransaction();
-        }catch (Exception e){
-            Ebean.rollbackTransaction();
-        }finally {
-            Ebean.endTransaction();
-        }
-        try{
             log.info("----->>>>>>>>start import excel data<<<<<<<<<<-----------------");
             FileItem fileItem=parseFormFileItem(request).get(0);
             Workbook workbook= ExcelUtil.generateWorkbook(fileItem);

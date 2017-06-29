@@ -23,7 +23,7 @@ public class ApiClassParentMessageService {
             Student student=data.getStudent();
             api.setClassid(student.getClassInfo().getId());
             Long publishDate=message.getPublishdate();
-            api.setPublishdate(DateUtil.formatDateToSecond(publishDate));
+            api.setPublishdate(DateUtil.formatDateTime(publishDate));
             apiList.add(api);
         }
         return apiList;

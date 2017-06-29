@@ -24,7 +24,7 @@ public class ApiClassSchoolMsgService {
             ClassInfo classInfo=data.getClassInfo();
             api.setClassid(classInfo.getId());
             Long publishDate=message.getPublishdate();
-            api.setPublishdate(DateUtil.formatDateToSecond(publishDate));
+            api.setPublishdate(DateUtil.formatDateTime(publishDate));
             apiList.add(api);
         }
         return apiList;

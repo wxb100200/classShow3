@@ -34,7 +34,7 @@ public class ApiStuAttendanceService {
         for(StudentAttendanceDetail detail:attList){
             ApiStudentAtt api=new ApiStudentAtt();
             Long attTime=detail.getAttTime();
-            api.setAttTime(DateUtil.formatDateToSecond(attTime));
+            api.setAttTime(DateUtil.formatDateTime(attTime));
             api.setParentWord(detail.getParentWord());
             apiList.add(api);
         }

@@ -24,6 +24,15 @@ public class SynClassInfo {
     }
     public static void classbrand_getBzrClassid(){
         String url="http://zjgbanpai.hzxjhs.com/weixt/api/classbrand_getBzrClassid";
+        String body="apiparams={\"params\":{\"classroomid\":\"\",\"accessTlisten\":\"ccesstlisten000001\",\"SN\":\"587DA6830CE47FF2632D1EDFA0E302D4\",\"card\":\"1967948798\"}}";
+        try {
+            String result= HttpUtil.post(url,body);
+            log.info("----------------->>>>>接口返回结果："+result);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        /*String url="http://zjgbanpai.hzxjhs.com/weixt/api/classbrand_getBzrClassid";
         Map<String,String> map=new HashMap<String, String>();
         map.put("classroomid","");
         map.put("accessTlisten","ccesstlisten000001");
@@ -37,7 +46,7 @@ public class SynClassInfo {
             log.info("----------------->>>>>接口返回结果："+result);
         } catch (IOException e) {
             e.printStackTrace();
-        }
+        }*/
     }
     private static String parseMap(Map<String,String> map){
         StringBuilder result= new StringBuilder();

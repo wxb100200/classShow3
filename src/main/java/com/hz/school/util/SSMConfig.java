@@ -26,6 +26,10 @@ public class SSMConfig {
                 String keyStr = key+"";
                 String value = pro.getProperty(keyStr);
                 if(keyStr.equals(defaultDisk))continue;
+                if(!value.startsWith("/")){
+                    pro.put(key,value);
+                    continue;
+                }
                 File folder = new File(defaultDisk, value);
                 String newValue = folder.getAbsolutePath();
                 pro.put(key, newValue);
@@ -42,6 +46,10 @@ public class SSMConfig {
     public static String getProperty(String key){
         return pro.getProperty(key);
     }
-
+    public static void main(String[] args){
+        String startOfTerm=SSMConfig.getProperty("oneTermStartTime");
+        String uploadTemp=SSMConfig.getProperty("upload.temp");
+        System.out.println(startOfTerm);
+    }
 
 }

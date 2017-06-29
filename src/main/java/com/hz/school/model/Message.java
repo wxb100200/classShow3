@@ -7,7 +7,7 @@ import javax.persistence.Table;
  * 消息
  */
 @Entity
-@Table(name =Constant.DB_PREFIX+"message_student")
+@Table(name =Constant.DB_PREFIX+"message")
 public class Message extends BaseEntity{
     /**
      * 内容

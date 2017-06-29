@@ -28,7 +28,7 @@ public class Student extends BaseEntity{
      * 排序号
      */
     @Column(name = "order1")
-    private Integer order;
+    private Integer order=0;
     /**
      * 性别
      * 1、男，2、女

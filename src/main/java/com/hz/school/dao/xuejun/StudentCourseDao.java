@@ -20,19 +20,11 @@ import java.util.Map;
  * Created by Administrator on 2017/6/14.
  */
 public class StudentCourseDao {
-    private static Logger log= Logger.getLogger(GoClassCourseDao.class);
+    private static Logger log= Logger.getLogger(StudentCourseDao.class);
+    private static Map<String,GoClassStudent> goClassStudentMap=(Map<String,GoClassStudent>)EbeanUtil.find(GoClassStudent.class).where().setMapKey("refId").findMap();
     private static Map<String,Student> studentMap=(Map<String,Student>) EbeanUtil.find(Student.class).where().setMapKey("stuNo").findMap();
 
     public static void parseSheet(Sheet sheet, int startRow, int startColumn, int endColumn){
-        try{
-            Ebean.beginTransaction();
-            Ebean.createSqlQuery("truncate table am_go_class_student").findUnique();
-            Ebean.commitTransaction();
-        }catch (Exception e){
-            Ebean.rollbackTransaction();
-        }finally {
-            Ebean.endTransaction();
-        }
         Row row=null;
         int rowNum=0;
         List<Row> rowList=new ArrayList<Row>();
@@ -98,15 +90,30 @@ public class StudentCourseDao {
     }
     private static GoClassStudent generateGoClassStudent(Object obj, String name, String poNumber, int num, int i, Student student){
         log.info("-------------->>>>>>>>>>>>>obj:"+obj.toString().replaceAll("\\s*","")+"name:"+name+",poNumber:"+poNumber+",num:"+num+",i:"+i);
-        GoClassStudent goClassStudent=new GoClassStudent();
-        goClassStudent.setGoClassCourse(generateGoClassCourse(obj,num,i));
-        goClassStudent.setStudent(student);
-        goClassStudent.setName(name);
-        goClassStudent.setPoNumber(poNumber);
-        goClassStudent.setWeek(i);
-        goClassStudent.setNum(num);
-        goClassStudent.setCell(obj.toString());
-        return goClassStudent;
+        String refId=poNumber+"-"+i+"-"+num;
+        if(goClassStudentMap.containsKey(refId)){
+            GoClassStudent goClassStudent =goClassStudentMap.get(refId);
+            String oldCell=goClassStudent.getCell();
+            if(!obj.toString().equals(oldCell)){
+                goClassStudent.setGoClassCourse(generateGoClassCourse(obj, num, i));
+                goClassStudent.setCell(obj.toString());
+                return goClassStudent;
+            }else{
+                return null;
+            }
+
+        }else {
+            GoClassStudent goClassStudent = new GoClassStudent();
+            goClassStudent.setRefId(refId);
+            goClassStudent.setGoClassCourse(generateGoClassCourse(obj, num, i));
+            goClassStudent.setStudent(student);
+            goClassStudent.setName(name);
+            goClassStudent.setPoNumber(poNumber);
+            goClassStudent.setWeek(i);
+            goClassStudent.setNum(num);
+            goClassStudent.setCell(obj.toString());
+            return goClassStudent;
+        }
     }
     private static GoClassCourse generateGoClassCourse(Object obj, int num, int week){
         String str=obj.toString().replaceAll("\\s*","");

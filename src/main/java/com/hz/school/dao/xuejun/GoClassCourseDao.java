@@ -20,17 +20,9 @@ import java.util.Map;
  */
 public class GoClassCourseDao {
     private static Logger log= Logger.getLogger(GoClassCourseDao.class);
+    private static Map<String,GoClassCourse> goClassCourseMap=(Map<String,GoClassCourse>)EbeanUtil.find(GoClassCourse.class).where().setMapKey("refId").findMap();
     private static Map<String,ClassRoom> classRoomMap= (Map<String,ClassRoom>) EbeanUtil.find(ClassRoom.class).where().setMapKey("classRoomName").findMap();
     public static void parseSheet(Sheet sheet,int startRow,int startColumn,int endColumn){
-        try{
-            Ebean.beginTransaction();
-            Ebean.createSqlQuery("truncate table am_go_class_course").findUnique();
-            Ebean.commitTransaction();
-        }catch (Exception e){
-            Ebean.rollbackTransaction();
-        }finally {
-            Ebean.endTransaction();
-        }
         Row row=null;
         Row row2=null;
         Iterator<Row> rows=sheet.rowIterator();
@@ -88,14 +80,35 @@ public class GoClassCourseDao {
         int timeInterval=generateTimeInterval(i);
         int weekday=generateWeekday(i);
         log.info("---->>>generate data is classNum:"+classNum+",classroomId:"+classRoom.getId()+",courseName:"+courseName+",teacherName:"+teacherName+",timeInterval:"+timeInterval+",weekday:"+weekday);
-        GoClassCourse goClassCourse=new GoClassCourse();
-        goClassCourse.setClassNum(classNum);
-        goClassCourse.setClassRoom(classRoom);
-        goClassCourse.setCourseName(courseName);
-        goClassCourse.setTeacherName(teacherName);
-        goClassCourse.setTimeInterval(timeInterval);
-        goClassCourse.setWeekday(weekday);
-        return goClassCourse;
+        String refId=generateRefId(classRoom,weekday,classNum);
+        if(goClassCourseMap.containsKey(refId)){
+            GoClassCourse goClassCourse=goClassCourseMap.get(refId);
+            String oldCourseName=goClassCourse.getCourseName();
+            String oldTeacherName=goClassCourse.getTeacherName();
+            if(!oldCourseName.equals(courseName)||!oldTeacherName.equals(teacherName)){
+                goClassCourse.setCourseName(courseName);
+                goClassCourse.setTeacherName(teacherName);
+                return goClassCourse;
+            }else{
+                return null;
+            }
+
+        }else {
+            GoClassCourse goClassCourse = new GoClassCourse();
+            goClassCourse.setRefId(refId);
+            goClassCourse.setClassNum(classNum);
+            goClassCourse.setClassRoom(classRoom);
+            goClassCourse.setCourseName(courseName);
+            goClassCourse.setTeacherName(teacherName);
+            goClassCourse.setTimeInterval(timeInterval);
+            goClassCourse.setWeekday(weekday);
+            return goClassCourse;
+        }
+    }
+    private static String generateRefId(ClassRoom classRoom,Integer weekday,Integer classNum){
+        String classRoomName=classRoom.getClassRoomName();
+        return classRoomName+"-"+weekday+"-"+classNum;
+
     }
     private static int generateWeekday(int i){
         if(i>0&&i<=9){

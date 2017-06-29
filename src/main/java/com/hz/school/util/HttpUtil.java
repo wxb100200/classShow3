@@ -1,184 +1,356 @@
-package com.hz.school.util;
+package com.hz.school.util; /**
+ * @file HttpUtil.java
+ * 
+ * @brief 
+ * HttpUtil is a single class containing methods to conveniently perform HTTP 
+ * requests. HttpUtil only uses regular java io and net functionality and does 
+ * not depend on external libraries. 
+ * The class contains methods to perform a get, post, put, and delete request,
+ * and supports posting forms. Optionally, one can provide headers.
+ *
+ * Example usage:
+ * 
+ *     // get
+ *     String res = HttpUtil.get("http://www.google.com");
+ * 
+ *     // post
+ *     String res = HttpUtil.post("http://sendmedata.com", "This is the data");
+ *
+ *     // post form
+ *     Map<String, String> params = new HashMap<String, String>();
+ *     params.put("firstname", "Joe");
+ *     params.put("lastname", "Smith");
+ *     params.put("age", "28");
+ *     String res = HttpUtil.postForm("http://site.com/newuser", params);
+ *
+ *     // append query parameters to url
+ *     String url = "http://mydatabase.com/users";
+ *     Map<String, String> params = new HashMap<String, String>();
+ *     params.put("orderby", "name");
+ *     params.put("limit", "10");
+ *     String fullUrl = HttpUtil.appendQueryParams(url, params);
+ *     // fullUrl = "http://mydatabase.com/user?orderby=name&limit=10"
+ *
+ * @license
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy 
+ * of the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ *
+ * Copyright (c) 2012 Almende B.V.
+ *
+ * @author 	Jos de Jong, <jos@almende.org>
+ * @date	  2012-05-14
+ */
 
-import org.apache.http.HttpResponse;
-import org.apache.http.NameValuePair;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.conn.scheme.Scheme;
-import org.apache.http.conn.ssl.SSLSocketFactory;
-import org.apache.http.entity.ByteArrayEntity;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.message.BasicNameValuePair;
-import org.apache.http.util.EntityUtils;
-
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.security.KeyStore;
-import java.util.ArrayList;
-import java.util.List;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
+import java.util.HashMap;
 import java.util.Map;
 
-/**
- * http请求工具类
- */
 public class HttpUtil {
-    private static final String DEFAULT_ENCODING = "GBK";
+	/**
+	 * Send a get request
+	 * @param url
+	 * @return response
+	 * @throws IOException 
+	 */
+	static public String get(String url) throws IOException {
+		return get(url, null);
+	}
 
-    /**
-     * Http的Get请求
-     * @param uri 服务器的uri要用物理IP或域名,不识别localhost或127.0.0.1形式!
-     */
-    public static String get(String uri) throws IOException {
-        HttpGet httpGet=new HttpGet(uri);
-        HttpClient httpClient=new DefaultHttpClient();
-        HttpResponse httpResponse=httpClient.execute(httpGet);
-        int statusCode=httpResponse.getStatusLine().getStatusCode();
-        if(statusCode==200){
-            String result = EntityUtils.toString(httpResponse.getEntity());
-            return result;
-        }
-        throw new IOException("status is:"+statusCode);
-    }
-    public static String get(String uri, Map<String, String> paramMap)
-            throws ClientProtocolException, IOException {
-        StringBuilder sb = new StringBuilder(uri);
-        if (paramMap != null) {
-            boolean isBegin = true;
-            for (String key : paramMap.keySet()) {
-                if (isBegin) {
-                    sb.append("?").append(key).append("=")
-                            .append(paramMap.get(key));
-                    isBegin = false;
-                } else {
-                    sb.append("&").append(key).append("=")
-                            .append(paramMap.get(key));
-                }
-            }
-        }
-        HttpGet httpGet = new HttpGet(sb.toString());
-        HttpClient httpClient = new DefaultHttpClient();
-        HttpResponse httpResponse = httpClient.execute(httpGet);
-        int statusCode;
-        if ((statusCode = httpResponse.getStatusLine().getStatusCode()) == 200) {
-            String result = EntityUtils.toString(httpResponse.getEntity());
-            return result;
-        }
-        throw new IOException("status is " + statusCode);
-    }
-    /**
-     * GET方式请求https
-     *
-     * @param uri 服务器的uri要用物理IP或域名,不识别localhost或127.0.0.1形式!
-     */
-    public static String httpsGet(String uri, String keyFile, String keyPwd)
-            throws Exception {
-        HttpGet httpGet = new HttpGet(uri);
-        HttpClient httpClient = newHttpsClient(keyFile, keyPwd);
-        HttpResponse httpResponse = httpClient.execute(httpGet);
-        int statusCode;
-        if ((statusCode = httpResponse.getStatusLine().getStatusCode()) == 200) {
-            String result = EntityUtils.toString(httpResponse.getEntity());
-            return result;
-        }
-        throw new IOException("status is " + statusCode);
-    }
-    /**
-     * POST方式请求
-     * @param uri  服务器的uri要用物理IP或域名,不识别localhost或127.0.0.1形式!
-     */
-    public static String post(String uri, Map<String, String> paramMap)
-            throws ClientProtocolException, IOException {
+	/**
+	 * Send a get request
+	 * @param url         Url as string
+	 * @param headers     Optional map with headers
+	 * @return response   Response as string
+	 * @throws IOException 
+	 */
+	static public String get(String url,
+			Map<String, String> headers) throws IOException {
+		return fetch("GET", url, null, headers);
+	}
 
-        System.out.println(uri);
+	/**
+	 * Send a post request
+	 * @param url         Url as string
+	 * @param body        Request body as string
+	 * @param headers     Optional map with headers
+	 * @return response   Response as string
+	 * @throws IOException 
+	 */
+	static public String post(String url, String body,
+			Map<String, String> headers) throws IOException {
+		return fetch("POST", url, body, headers);
+	}
 
-        HttpPost httpPost = new HttpPost(uri);
-        List<NameValuePair> params = new ArrayList<NameValuePair>();
-        if (paramMap != null) {
-            for (String key : paramMap.keySet()) {
-                params.add(new BasicNameValuePair(key, paramMap.get(key)));
-            }
-            httpPost.setEntity(new UrlEncodedFormEntity(params,
-                    DEFAULT_ENCODING));
-        }
-        HttpResponse httpResponse = new DefaultHttpClient().execute(httpPost);
-        int statusCode;
-        if ((statusCode = httpResponse.getStatusLine().getStatusCode()) == 200) {
-            return EntityUtils.toString(httpResponse.getEntity());
-        }
-        throw new IOException("status is " + statusCode);
-    }
-    /**
-     * POST方式请求
-     *
-     * @param uri 服务器的uri要用物理IP或域名,不识别localhost或127.0.0.1形式!
-     */
-    public static String post(String uri, Map<String, String> paramMap,
-                              Map<String, String> headers) throws ClientProtocolException,
-            IOException {
-        HttpPost httpPost = new HttpPost(uri);
-        if (headers != null) {
-            for (String key : headers.keySet()) {
-                httpPost.setHeader(key, headers.get(key));
-            }
-        }
-        List<NameValuePair> params = new ArrayList<NameValuePair>();
-        if (paramMap != null) {
-            for (String key : paramMap.keySet()) {
-                params.add(new BasicNameValuePair(key, paramMap.get(key)));
-            }
-            httpPost.setEntity(new ByteArrayEntity(paramMap.get("reqData").getBytes("UTF-8")));
-//			httpPost.setEntity(new UrlEncodedFormEntity(params,
-//					DEFAULT_ENCODING));
-        }
-        HttpResponse httpResponse = new DefaultHttpClient().execute(httpPost);
-        int statusCode;
-        if ((statusCode = httpResponse.getStatusLine().getStatusCode()) == 200) {
-            return EntityUtils.toString(httpResponse.getEntity());
-        }
-        throw new IOException("status is " + statusCode);
-    }
-    /**
-     * POST方式请求https
-     *
-     * @param uri 服务器的uri要用物理IP或域名,不识别localhost或127.0.0.1形式!
-     */
-    public static String httpsPost(String uri, Map<String, String> paramMap,
-                                   String keyFile, String keyPwd) throws ClientProtocolException,
-            IOException, Exception {
-        HttpPost httpPost = new HttpPost(uri);
-        List<NameValuePair> params = new ArrayList<NameValuePair>();
-        if (paramMap != null) {
-            for (String key : paramMap.keySet()) {
-                params.add(new BasicNameValuePair(key, paramMap.get(key)));
-            }
-            httpPost.setEntity(new UrlEncodedFormEntity(params,
-                    DEFAULT_ENCODING));
-        }
-        HttpResponse httpResponse = newHttpsClient(keyFile, keyPwd).execute(
-                httpPost);
-        int statusCode;
-        if ((statusCode = httpResponse.getStatusLine().getStatusCode()) == 200) {
-            return EntityUtils.toString(httpResponse.getEntity());
-        }
-        throw new IOException("status is " + statusCode);
-    }
+	/**
+	 * Send a post request
+	 * @param url         Url as string
+	 * @param body        Request body as string
+	 * @return response   Response as string
+	 * @throws IOException 
+	 */
+	static public String post(String url, String body) throws IOException {
+		return post(url, body, null);
+	}
 
-    /*
-	* 新建httpsClient
-	*/
-    private static HttpClient newHttpsClient(String keyFile, String keyPwd)
-            throws Exception {
-        KeyStore trustStore = KeyStore.getInstance("BKS");
-        trustStore.load(new FileInputStream(new File(keyFile)),
-                keyPwd.toCharArray());
-        SSLSocketFactory socketFactory = new SSLSocketFactory(trustStore);
-        Scheme sch = new Scheme("https", socketFactory, 8443);
-        HttpClient client = new DefaultHttpClient();
-        client.getConnectionManager().getSchemeRegistry().register(sch);
-        return client;
-    }
+	/**
+	 * Post a form with parameters
+	 * @param url         Url as string
+	 * @param params      map with parameters/values
+	 * @return response   Response as string
+	 * @throws IOException 
+	 */
+	static public String postForm(String url, Map<String, String> params) 
+			throws IOException {
+		return postForm(url, params, null);
+	}
+
+	/**
+	 * Post a form with parameters
+	 * @param url         Url as string
+	 * @param params      Map with parameters/values
+	 * @param headers     Optional map with headers
+	 * @return response   Response as string
+	 * @throws IOException 
+	 */
+	static public String postForm(String url, Map<String, String> params,
+			Map<String, String> headers) throws IOException {
+		// set content type
+		if (headers == null) {
+			headers = new HashMap<String, String>();
+		}
+		headers.put("Content-Type", "application/x-www-form-urlencoded");
+
+		// parse parameters
+		String body = "";
+		if (params != null) {
+			boolean first = true;
+			for (String param : params.keySet()) {
+				if (first) {
+					first = false;
+				}
+				else {
+					body += "&";
+				}
+				String value = params.get(param);
+				body += URLEncoder.encode(param, "UTF-8") + "=";
+				body += URLEncoder.encode(value, "UTF-8");
+			}
+		}
+
+		return post(url, body, headers);
+	}
+
+	/**
+	 * Send a put request
+	 * @param url         Url as string
+	 * @param body        Request body as string
+	 * @param headers     Optional map with headers
+	 * @return response   Response as string
+	 * @throws IOException 
+	 */
+	static public String put(String url, String body,
+			Map<String, String> headers) throws IOException {
+		return fetch("PUT", url, body, headers);
+	}
+
+	/**
+	 * Send a put request
+	 * @param url         Url as string
+	 * @return response   Response as string
+	 * @throws IOException 
+	 */
+	static public String put(String url, String body) throws IOException {
+		return put(url, body, null);
+	}
+	
+	/**
+	 * Send a delete request
+	 * @param url         Url as string
+	 * @param headers     Optional map with headers
+	 * @return response   Response as string
+	 * @throws IOException 
+	 */
+	static public String delete(String url,
+			Map<String, String> headers) throws IOException {
+		return fetch("DELETE", url, null, headers);
+	}
+	
+	/**
+	 * Send a delete request
+	 * @param url         Url as string
+	 * @return response   Response as string
+	 * @throws IOException 
+	 */
+	static public String delete(String url) throws IOException {
+		return delete(url, null);
+	}
+	
+	/**
+	 * Append query parameters to given url
+	 * @param url         Url as string
+	 * @param params      Map with query parameters
+	 * @return url        Url with query parameters appended
+	 * @throws IOException 
+	 */
+	static public String appendQueryParams(String url, 
+			Map<String, String> params) throws IOException {
+		String fullUrl = url;
+		if (params != null) {
+			boolean first = (fullUrl.indexOf('?') == -1);
+			for (String param : params.keySet()) {
+				if (first) {
+					fullUrl += '?';
+					first = false;
+				}
+				else {
+					fullUrl += '&';
+				}
+				String value = params.get(param);
+				fullUrl += URLEncoder.encode(param, "UTF-8") + '=';
+				fullUrl += URLEncoder.encode(value, "UTF-8");
+			}
+		}
+		
+		return fullUrl;
+	}
+	
+	/**
+	 * Retrieve the query parameters from given url
+	 * @param url         Url containing query parameters
+	 * @return params     Map with query parameters
+	 * @throws IOException 
+	 */
+	static public Map<String, String> getQueryParams(String url) 
+			throws IOException {
+		Map<String, String> params = new HashMap<String, String>();
+	
+		int start = url.indexOf('?');
+		while (start != -1) {
+			// read parameter name
+			int equals = url.indexOf('=', start);
+			String param = "";
+			if (equals != -1) {
+				param = url.substring(start + 1, equals);
+			}
+			else {
+				param = url.substring(start + 1);
+			}
+			
+			// read parameter value
+			String value = "";
+			if (equals != -1) {
+				start = url.indexOf('&', equals);
+				if (start != -1) {
+					value = url.substring(equals + 1, start);
+				}
+				else {
+					value = url.substring(equals + 1);
+				}
+			}
+			
+			params.put(URLDecoder.decode(param, "UTF-8"), 
+				URLDecoder.decode(value, "UTF-8"));
+		}
+		
+		return params;
+	}
+
+	/**
+	 * Returns the url without query parameters
+	 * @param url         Url containing query parameters
+	 * @return url        Url without query parameters
+	 * @throws IOException 
+	 */
+	static public String removeQueryParams(String url) 
+			throws IOException {
+		int q = url.indexOf('?');
+		if (q != -1) {
+			return url.substring(0, q);
+		}
+		else {
+			return url;
+		}
+	}
+	
+	/**
+	 * Send a request
+	 * @param method      HTTP method, for example "GET" or "POST"
+	 * @param url         Url as string
+	 * @param body        Request body as string
+	 * @param headers     Optional map with headers
+	 * @return response   Response as string
+	 * @throws IOException 
+	 */
+	static public String fetch(String method, String url, String body,
+			Map<String, String> headers) throws IOException {
+		// connection
+		URL u = new URL(url);
+		HttpURLConnection conn = (HttpURLConnection)u.openConnection();
+		conn.setConnectTimeout(10000);
+		conn.setReadTimeout(10000);
+
+		// method
+		if (method != null) {
+			conn.setRequestMethod(method);
+		}
+
+		// headers
+		if (headers != null) {
+			for(String key : headers.keySet()) {
+				conn.addRequestProperty(key, headers.get(key));
+			}
+		}
+
+		// body
+		if (body != null) {
+			conn.setDoOutput(true);
+			OutputStream os = conn.getOutputStream();
+			os.write(body.getBytes());
+			os.flush();
+			os.close();
+		}
+		
+		// response
+		InputStream is = conn.getInputStream();
+		String response = streamToString(is);
+		is.close();
+		
+		// handle redirects
+		if (conn.getResponseCode() == 301) {
+			String location = conn.getHeaderField("Location");
+			return fetch(method, location, body, headers);
+		}
+		
+		return response;
+	}
+	
+	/**
+	 * Read an input stream into a string
+	 * @param in
+	 * @return
+	 * @throws IOException
+	 */
+	static public String streamToString(InputStream in) throws IOException {
+		StringBuffer out = new StringBuffer();
+		byte[] b = new byte[4096];
+		for (int n; (n = in.read(b)) != -1;) {
+			out.append(new String(b, 0, n));
+		}
+		return out.toString();
+	}
 }
