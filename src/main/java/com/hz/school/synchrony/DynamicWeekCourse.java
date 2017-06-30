@@ -19,7 +19,7 @@ import java.util.*;
  */
 public class DynamicWeekCourse {
     private static Logger log= Logger.getLogger(DynamicWeekCourse.class);
-    private static Map<String,TotalCourse> totalCourseMap= (Map<String,TotalCourse>)EbeanUtil.find(TotalCourse.class).where().setMapKey("refId").findMap();
+    private static Map<String,TotalCourse> totalCourseMap= null;
     private static Map<String,ClassInfo> classInfoMap= (Map<String,ClassInfo>) EbeanUtil.find(ClassInfo.class).where().setMapKey("className").findMap();
     private static Map<String,CourseInfo> courseInfoMap=(Map<String,CourseInfo>) EbeanUtil.find(CourseInfo.class).where().setMapKey("courseName").findMap();
     private static Map<String,Teacher> teacherMap=(Map<String,Teacher>) EbeanUtil.find(Teacher.class).where().setMapKey("name").findMap();
@@ -28,11 +28,13 @@ public class DynamicWeekCourse {
         requestUrl();
     }
     public static void requestUrl(){
+        totalCourseMap= (Map<String,TotalCourse>)EbeanUtil.find(TotalCourse.class).where().setMapKey("refId").findMap();
         try {
             String result= HttpUtil.post(url,null);
             log.info(result);
-            String encode=StringUtil.getEncoding(result);
-            log.info("---------->>>>>>>>"+encode);
+            log.info("---->>>>totalCourseMapSize:"+totalCourseMap.size());
+            log.info("---->>>>classInfoMapSize:"+classInfoMap.size());
+            log.info("---->>>>courseInfoMapSize:"+courseInfoMap.size());
             parseData(result);
         } catch (IOException e) {
             e.printStackTrace();
