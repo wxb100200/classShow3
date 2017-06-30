@@ -7,7 +7,6 @@ import com.hz.school.quartz.TotalCourseQuartz;
 import com.hz.school.util.Logger;
 import org.quartz.*;
 import org.quartz.impl.StdSchedulerFactory;
-
 import java.text.ParseException;
 
 /**

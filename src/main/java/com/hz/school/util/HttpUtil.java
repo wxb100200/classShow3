@@ -50,9 +50,7 @@ package com.hz.school.util; /**
  * @date	  2012-05-14
  */
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLDecoder;
@@ -61,6 +59,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class HttpUtil {
+	private static Logger log= Logger.getLogger(HttpUtil.class);
 	/**
 	 * Send a get request
 	 * @param url
@@ -303,8 +302,7 @@ public class HttpUtil {
 		HttpURLConnection conn = (HttpURLConnection)u.openConnection();
 		conn.setConnectTimeout(10000);
 		conn.setReadTimeout(10000);
-		conn.setRequestProperty("Charsert", "UTF-8");
-//		conn.setRequestProperty("contentType", "GBK");
+		conn.setRequestProperty("contentType", "UTF-8");
 		// method
 		if (method != null) {
 			conn.setRequestMethod(method);
@@ -328,8 +326,18 @@ public class HttpUtil {
 		
 		// response
 		InputStream is = conn.getInputStream();
-		String response = streamToString(is);
 
+		BufferedReader in = new BufferedReader(new InputStreamReader(is, "UTF-8"));
+		StringBuffer buffer = new StringBuffer();
+		String line = "";
+		while ((line = in.readLine()) != null){
+			buffer.append(line);
+		}
+		String response = buffer.toString();
+
+//		String response = streamToString(is);
+
+		log.info("---->>>>>response:"+response);
 		is.close();
 		
 		// handle redirects

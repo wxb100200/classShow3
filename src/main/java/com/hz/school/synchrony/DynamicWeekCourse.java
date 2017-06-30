@@ -29,14 +29,17 @@ public class DynamicWeekCourse {
     }
     public static void requestUrl(){
         try {
-//            String result=new String(HttpUtil.post(url,null).getBytes("utf-8"));
             String result= HttpUtil.post(url,null);
             log.info(result);
+            String encode=StringUtil.getEncoding(result);
+            log.info("---------->>>>>>>>"+encode);
             parseData(result);
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
+
+
     private static void parseData(String data){
         JSONObject jsonObject=JSONObject.parseObject(data);
         String t=jsonObject.getString("T");
