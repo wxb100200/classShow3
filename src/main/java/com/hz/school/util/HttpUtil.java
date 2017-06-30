@@ -303,7 +303,8 @@ public class HttpUtil {
 		HttpURLConnection conn = (HttpURLConnection)u.openConnection();
 		conn.setConnectTimeout(10000);
 		conn.setReadTimeout(10000);
-
+		conn.setRequestProperty("Charsert", "UTF-8");
+//		conn.setRequestProperty("contentType", "GBK");
 		// method
 		if (method != null) {
 			conn.setRequestMethod(method);
@@ -328,6 +329,7 @@ public class HttpUtil {
 		// response
 		InputStream is = conn.getInputStream();
 		String response = streamToString(is);
+
 		is.close();
 		
 		// handle redirects

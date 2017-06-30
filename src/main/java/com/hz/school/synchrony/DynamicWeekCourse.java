@@ -15,9 +15,10 @@ import java.util.*;
 /**
  * 教师：选修课学生信息之学生列表查询
  * 获取总行政课程表数据
+ * refId表示：学期-第几周-班级id-星期几-第几节
  */
-public class getDynamicWeekCourse {
-    private static Logger log= Logger.getLogger(getDynamicWeekCourse.class);
+public class DynamicWeekCourse {
+    private static Logger log= Logger.getLogger(DynamicWeekCourse.class);
     private static Map<String,TotalCourse> totalCourseMap= (Map<String,TotalCourse>)EbeanUtil.find(TotalCourse.class).where().setMapKey("refId").findMap();
     private static Map<String,ClassInfo> classInfoMap= (Map<String,ClassInfo>) EbeanUtil.find(ClassInfo.class).where().setMapKey("className").findMap();
     private static Map<String,CourseInfo> courseInfoMap=(Map<String,CourseInfo>) EbeanUtil.find(CourseInfo.class).where().setMapKey("courseName").findMap();
@@ -28,6 +29,7 @@ public class getDynamicWeekCourse {
     }
     public static void requestUrl(){
         try {
+//            String result=new String(HttpUtil.post(url,null).getBytes("utf-8"));
             String result= HttpUtil.post(url,null);
             log.info(result);
             parseData(result);
@@ -44,39 +46,36 @@ public class getDynamicWeekCourse {
         }
         String monday=jsonObject.getString("monday");
         String sunday=jsonObject.getString("sunday");
-        String termName=jsonObject.getString("terName");
+        String termName=jsonObject.getString("termName");
         String studySectionName=jsonObject.getString("studySectionName");
         log.info("------>>>>t:"+t+",monday:"+monday+",sunday:"+sunday+",termName"+termName+",studySectionName"+studySectionName);
         int numWeek=judgeWeekNum(monday);//第几周
         String termNum=termName.substring(termName.indexOf("(")+1,termName.indexOf(")"));//第几学期
         TotalCourse temp=new TotalCourse();
-        temp.setRefId(termNum+"-"+numWeek+"-");
         temp.setTermName(termName);
         temp.setNumWeek(numWeek);
         temp.setWeekInfo(monday+"-"+sunday);
+        String refId=termNum+"-"+numWeek+"-";
         JSONArray jsonArray=jsonObject.getJSONArray("classCourse");
         for (Object obj : jsonArray) {
             if (obj == null) continue;
             String str = obj.toString();
-            parseOneClass(str,temp);
+            parseOneClass(str,temp,refId);
         }
     }
-    private static void parseOneClass(String data,TotalCourse temp){
+    private static void parseOneClass(String data,TotalCourse temp,String ref){
         JSONObject jsonObject=JSONObject.parseObject(data);
         String className=jsonObject.getString("className");
         ClassInfo classInfo=classInfoMap.get(className);
-        Long classId=null;
-        if(classInfo!=null){
-            classId=classInfo.getId();
-        }
-        temp.setRefId(temp.getRefId()+classId+"-");
+        String classId=className.replaceAll("\\D+", "");
+        String refId=ref+classId+"-";
         temp.setClassInfo(classInfo);
         JSONArray jsonArray=jsonObject.getJSONArray("courseWeek");
         List<TotalCourse> totalCourses=new ArrayList<TotalCourse>();
         for (Object obj : jsonArray) {
             if(obj==null)continue;
             String str=obj.toString();
-            TotalCourse totalCourse=parseOneCourse(str,classInfo,temp);
+            TotalCourse totalCourse=parseOneCourse(str,temp,refId);
             if(totalCourse!=null){
                 totalCourses.add(totalCourse);
             }
@@ -91,7 +90,8 @@ public class getDynamicWeekCourse {
             Ebean.endTransaction();
         }
     }
-    private static TotalCourse parseOneCourse(String data,ClassInfo classInfo,TotalCourse temp){
+
+    private static TotalCourse parseOneCourse(String data,TotalCourse temp,String refId){
         JSONObject jsonObject=JSONObject.parseObject(data);
         String classSection=jsonObject.getString("classSection");
         String courseName=jsonObject.getString("ncourseName");
@@ -99,7 +99,7 @@ public class getDynamicWeekCourse {
         String teacherName=jsonObject.getString("tchName");
         String week=jsonObject.getString("week");//星期1-7
 
-        temp.setRefId(temp.getRefId()+week+"-"+section);
+        temp.setRefId(refId+week+"-"+section);
         temp.setWeekday(Integer.parseInt(week));
         int classNum=Integer.parseInt(section);
         temp.setClassNum(classNum);
@@ -116,6 +116,7 @@ public class getDynamicWeekCourse {
     }
     private static TotalCourse generateTotalCourse(TotalCourse temp){
         String refId=temp.getRefId();
+        log.info("----->>>>>refId:"+refId);
         if(totalCourseMap.containsKey(refId)){
             TotalCourse totalCourse=totalCourseMap.get(refId);
             String oldCourseName=temp.getCourseName();
@@ -132,6 +133,7 @@ public class getDynamicWeekCourse {
         }
         TotalCourse totalCourse=new TotalCourse();
         totalCourse.setRefId(temp.getRefId());
+        totalCourse.setTermName(temp.getTermName());
         totalCourse.setClassNum(temp.getClassNum());
         totalCourse.setClassInfo(temp.getClassInfo());
         totalCourse.setCourseName(temp.getCourseName());

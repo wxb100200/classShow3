@@ -19,17 +19,17 @@ public class ApplicationMain {
     private static SchedulerFactory schedulerFactory = new StdSchedulerFactory();
     private static Scheduler scheduler= null;
     public static void main(String[] args){
-//        testQuartz();
-        totalCourseQuartz();
-        GoClassCourseQuartz();
-        GoClassStudentCourseQuartz();
+        testQuartz();
+//        totalCourseQuartz();
+//        GoClassCourseQuartz();
+//        GoClassStudentCourseQuartz();
     }
     private static void GoClassStudentCourseQuartz(){
         try {
             scheduler = schedulerFactory.getScheduler();
             JobDetail jobDetail=new JobDetail("GoClassStudentCourseQuartz", "SYNCHRONY", GoClassStudentCourseQuartz.class);
             CronTrigger trigger=new CronTrigger("GoClassStudentCourseQuartzTrigger", "SYNCHRONY");
-            trigger.setCronExpression("0/5 * * * * ?");
+            trigger.setCronExpression("0 0/1 * * * ?");
             scheduler.scheduleJob(jobDetail, trigger);
             scheduler.start();
         } catch (SchedulerException e) {
@@ -72,7 +72,7 @@ public class ApplicationMain {
             scheduler = schedulerFactory.getScheduler();
             JobDetail jobDetail=new JobDetail("TestQuartz", "SYNCHRONY", TestQuartz.class);
             CronTrigger trigger=new CronTrigger("TestQuartzTrigger", "SYNCHRONY");
-            trigger.setCronExpression("0/5 * * * * ?");
+            trigger.setCronExpression("0 0 0/1 * * ?");
             scheduler.scheduleJob(jobDetail, trigger);
             scheduler.start();
         } catch (SchedulerException e) {
