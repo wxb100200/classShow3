@@ -110,7 +110,7 @@ public class Account extends BaseEntity{
         try{
             MessageDigest md5=MessageDigest.getInstance("MD5");
             this.salt = RandomUtil.generateRandomPassword(20); // 重置密码时，需要重新生产salt.
-            this.password =new String( BASE64Codec.encode(md5.digest((this.salt + newPassword).getBytes("utf-8"))) );
+//            this.password =new String( BASE64Codec.encode(md5.digest((this.salt + newPassword).getBytes("utf-8"))) );
             return true;
         }catch (Exception exp){
             log.error("Error in reset password , new password:" + newPassword + ", salt: " + this.salt ,exp);
@@ -126,7 +126,7 @@ public class Account extends BaseEntity{
     public boolean checkPassword(String tryPassword){
         try{
             MessageDigest md5=MessageDigest.getInstance("MD5");
-            return this.password.equals( new String( BASE64Codec.encode(md5.digest((this.salt + tryPassword).getBytes("utf-8"))) ) );
+//            return this.password.equals( new String( BASE64Codec.encode(md5.digest((this.salt + tryPassword).getBytes("utf-8"))) ) );
         }catch (Exception exp){
             log.error("Error in check password , new password:" + tryPassword + ", salt: " + this.salt ,exp);
         }
