@@ -17,6 +17,8 @@ import java.util.Map;
 /**
  * 获取课表数据对应的学生
  * refId表示：学期-第几周-教室id-星期几-第几节
+ *
+ *
  */
 public class GetCourseStudent {
     private static Logger log= Logger.getLogger(GetCourseStudent.class);
