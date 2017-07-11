@@ -21,7 +21,7 @@
             </cron>
         </trigger>
     </job>-->
-    <job>
+    <!--<job>
         <job-detail>
             <name>TotalCourseQuartz</name>
             <group>SYNCHRONY</group>
@@ -37,5 +37,5 @@
                 <cron-expression>0 0/1 * * * ?</cron-expression>
             </cron>
         </trigger>
-    </job>
+    </job>-->
 </quartz>
