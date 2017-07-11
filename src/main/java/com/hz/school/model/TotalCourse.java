@@ -1,9 +1,7 @@
 package com.hz.school.model;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
+import javax.persistence.*;
+import java.util.List;
 
 /**
  * 总行政班课程表
@@ -61,6 +59,16 @@ public class TotalCourse extends BaseEntity {
      * 可以判断是第几周
      */
     private String weekInfo;
+
+    /**
+     * 班级类型
+     * 1：走班，0：不是走班
+     */
+    @Column(length = 1)
+    private Integer type;
+
+
+
     public Integer getClassNum() {
         return classNum;
     }
@@ -148,4 +156,13 @@ public class TotalCourse extends BaseEntity {
     public void setTermName(String termName) {
         this.termName = termName;
     }
+
+    public Integer getType() {
+        return type;
+    }
+
+    public void setType(Integer type) {
+        this.type = type;
+    }
+
 }

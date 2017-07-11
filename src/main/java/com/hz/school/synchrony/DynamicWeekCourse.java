@@ -14,7 +14,7 @@ import java.util.*;
 
 /**
  * 教师：选修课学生信息之学生列表查询
- * 获取总行政课程表数据
+ * 获取总课程表数据包括总行政课表和走班课表
  * refId表示：学期-第几周-班级id-星期几-第几节
  */
 public class DynamicWeekCourse {
@@ -37,7 +37,7 @@ public class DynamicWeekCourse {
             log.info("---->>>>courseInfoMapSize:"+courseInfoMap.size());
             parseData(result);
         } catch (IOException e) {
-            e.printStackTrace();
+            log.error("DynamicWeekCourse requestUrl error",e);
         }
     }
 
@@ -103,9 +103,15 @@ public class DynamicWeekCourse {
         String section=jsonObject.getString("section");//节次1-12
         String teacherName=jsonObject.getString("tchName");
         String week=jsonObject.getString("week");//星期1-7
+        String type=jsonObject.getString("choosCourse");//星期1-7
 
         temp.setRefId(refId+week+"-"+section);
         temp.setWeekday(Integer.parseInt(week));
+        if(type.equals("1")){
+            temp.setType(1);
+        }else{
+            temp.setType(0);
+        }
         int classNum=Integer.parseInt(section);
         temp.setClassNum(classNum);
         if(classNum<6){
@@ -149,6 +155,7 @@ public class DynamicWeekCourse {
         totalCourse.setWeekday(temp.getWeekday());
         totalCourse.setNumWeek(temp.getNumWeek());
         totalCourse.setWeekInfo(temp.getWeekInfo());
+        totalCourse.setType(temp.getType());
         return totalCourse;
 
     }
