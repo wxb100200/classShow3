@@ -300,8 +300,8 @@ public class HttpUtil {
 		// connection
 		URL u = new URL(url);
 		HttpURLConnection conn = (HttpURLConnection)u.openConnection();
-		conn.setConnectTimeout(30000);
-		conn.setReadTimeout(30000);
+		conn.setConnectTimeout(20000);
+		conn.setReadTimeout(20000);
 		conn.setRequestProperty("contentType", "UTF-8");
 		// method
 		if (method != null) {
