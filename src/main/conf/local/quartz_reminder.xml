@@ -4,7 +4,8 @@
         overwrite-existing-jobs="true">
 
     <!--测试定时任务-->
-    <!--<job>
+    <!--
+    <job>
         <job-detail>
             <name>TestQuartz</name>
             <group>SYNCHRONY</group>
@@ -20,8 +21,8 @@
                 <cron-expression>0 0/1 * * * ?</cron-expression>
             </cron>
         </trigger>
-    </job>-->
-    <!--<job>
+    </job>
+    <job>
         <job-detail>
             <name>TotalCourseQuartz</name>
             <group>SYNCHRONY</group>
@@ -37,5 +38,41 @@
                 <cron-expression>0 0/1 * * * ?</cron-expression>
             </cron>
         </trigger>
-    </job>-->
+    </job>
+    <job>
+        <job-detail>
+            <name>GoClassCourseQuartz</name>
+            <group>SYNCHRONY</group>
+            <description>GoClassCourseQuartz data</description>
+            <job-class>com.hz.school.quartz.GoClassCourseQuartz</job-class>
+        </job-detail>
+        <trigger>
+            <cron>
+                <name> GoClassCourseQuartz  job Trigger</name>
+                <group>SYNCHRONY</group>
+                <job-name>GoClassCourseQuartz Job</job-name>
+                <job-group>SYNCHRONY</job-group>
+                <cron-expression>0 0/1 * * * ?</cron-expression>
+            </cron>
+        </trigger>
+    </job>
+    -->
+    <job>
+        <job-detail>
+            <name>TestQuartz</name>
+            <group>SYNCHRONY</group>
+            <description>TestQuartz data</description>
+            <job-class>com.hz.school.quartz.TestQuartz</job-class>
+        </job-detail>
+        <trigger>
+            <cron>
+                <name> TestQuartz  job Trigger</name>
+                <group>SYNCHRONY</group>
+                <job-name>TestQuartz Job</job-name>
+                <job-group>SYNCHRONY</job-group>
+                <!--<cron-expression>0 0 7,13,22 * * ?</cron-expression>-->
+                <cron-expression>0 5,6,7 * * * ?</cron-expression>
+            </cron>
+        </trigger>
+    </job>
 </quartz>

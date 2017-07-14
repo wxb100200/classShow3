@@ -14,14 +14,15 @@ public class TotalCourse extends BaseEntity {
      */
     private String termName;
     /**
-     * 第几周
-     */
-    private Integer numWeek;
-    /**
      * 班级
      */
     @ManyToOne
     private ClassInfo classInfo;
+    /**
+     * 当前课表的日期
+     * yyyy-MM-dd转换的long类型
+     */
+    private Long date;
     /**
      * 周几
      */
@@ -141,14 +142,6 @@ public class TotalCourse extends BaseEntity {
         this.classInfo = classInfo;
     }
 
-    public Integer getNumWeek() {
-        return numWeek;
-    }
-
-    public void setNumWeek(Integer numWeek) {
-        this.numWeek = numWeek;
-    }
-
     public String getTermName() {
         return termName;
     }
@@ -165,4 +158,11 @@ public class TotalCourse extends BaseEntity {
         this.type = type;
     }
 
+    public Long getDate() {
+        return date;
+    }
+
+    public void setDate(Long date) {
+        this.date = date;
+    }
 }

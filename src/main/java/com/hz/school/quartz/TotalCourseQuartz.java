@@ -13,7 +13,7 @@ public class TotalCourseQuartz implements Job {
     private static Logger log= Logger.getLogger(TotalCourseQuartz.class);
     public void execute(JobExecutionContext jobExecutionContext) throws JobExecutionException {
         log.info("--------------------开始总课表定时任务--------------------");
-        DynamicWeekCourse.requestUrl();
+//        DynamicWeekCourse.requestUrl();
         log.info("--------------------结束总课表定时任务--------------------");
     }
 }

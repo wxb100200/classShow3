@@ -109,7 +109,7 @@ public class TotalCourseDao {
             totalCourse.setTeacher(teacherMap.get(teacherName));
             totalCourse.setTimeInterval(timeInterval);
             totalCourse.setWeekday(weekday);
-            totalCourse.setNumWeek(numWeek);
+//            totalCourse.setNumWeek(numWeek);
             totalCourse.setWeekInfo(sheetName);
             return totalCourse;
         }

@@ -59,12 +59,10 @@ public class DynamicWeekCourse {
             log.error("--->>>>在学期表中没有找到对应的学期名  termName:"+termName);
             return;
         }
-        int numWeek=judgeWeekNum(monday);//第几周
         TotalCourse temp=new TotalCourse();
         temp.setTermName(termName);
-        temp.setNumWeek(numWeek);
         temp.setWeekInfo(monday+"-"+sunday);
-        String refId=formatNum(termInfo.getId())+formatNum((long)numWeek);
+        String refId=formatNum(termInfo.getId());
         JSONArray jsonArray=jsonObject.getJSONArray("classCourse");
         for (Object obj : jsonArray) {
             if (obj == null) continue;
@@ -111,9 +109,12 @@ public class DynamicWeekCourse {
         String teacherName=jsonObject.getString("tchName").trim();
         String week=jsonObject.getString("week");//星期1-7
         String type=jsonObject.getString("choosCourse");//星期1-7
+        String day=jsonObject.getString("day");
 
-        String refId=ref+formatNum(Long.parseLong(week))+formatNum(Long.parseLong(section));
+        Long date=DateUtil.parseDate(day,"yyyy-MM-dd").getTime();
+        String refId=ref+date+formatNum(Long.parseLong(week))+formatNum(Long.parseLong(section));
         temp.setRefId(refId);
+        temp.setDate(date);
         temp.setWeekday(Integer.parseInt(week));
         if(type.equals("1")){
             temp.setType(1);
@@ -161,7 +162,7 @@ public class DynamicWeekCourse {
         totalCourse.setTeacher(temp.getTeacher());
         totalCourse.setTimeInterval(temp.getTimeInterval());
         totalCourse.setWeekday(temp.getWeekday());
-        totalCourse.setNumWeek(temp.getNumWeek());
+        totalCourse.setDate(temp.getDate());
         totalCourse.setWeekInfo(temp.getWeekInfo());
         totalCourse.setType(temp.getType());
         return totalCourse;
