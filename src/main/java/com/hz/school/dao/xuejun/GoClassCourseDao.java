@@ -53,10 +53,10 @@ public class GoClassCourseDao {
             if(obj==null){
                 continue;
             }
-            GoClassCourse goClassCourse=generateGoClassCourse(classRoom,obj,obj2,i);
-            if(goClassCourse!=null){
+//            GoClassCourse goClassCourse=generateGoClassCourse(classRoom,obj,obj2,i);
+           /* if(goClassCourse!=null){
                 goClassCourseList.add(goClassCourse);
-            }
+            }*/
         }
         //保存走班课表
         try {
@@ -69,7 +69,7 @@ public class GoClassCourseDao {
             Ebean.endTransaction();
         }
     }
-    private static GoClassCourse generateGoClassCourse(ClassRoom classRoom, Object obj, Object obj2, int i){
+   /* private static GoClassCourse generateGoClassCourse(ClassRoom classRoom, Object obj, Object obj2, int i){
         if(obj==null) return null;
         int classNum=generateClassNum(i);
         String courseName=obj.toString();
@@ -104,7 +104,7 @@ public class GoClassCourseDao {
             goClassCourse.setWeekday(weekday);
             return goClassCourse;
         }
-    }
+    }*/
     private static String generateRefId(ClassRoom classRoom,Integer weekday,Integer classNum){
         String classRoomName=classRoom.getClassRoomName();
         return classRoomName+"-"+weekday+"-"+classNum;

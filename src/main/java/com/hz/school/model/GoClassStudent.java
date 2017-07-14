@@ -21,27 +21,18 @@ public class GoClassStudent  extends BaseEntity {
     @ManyToOne
     private Student student;
 
-    //导入Excel存储的数据
     /**
-     * 姓名
+     * 学生姓名
      */
     private String name;
     /**
-     * 学号
+     * 学生学号
      */
-    private String poNumber;
+    private String stuNo;
     /**
-     * 周几
+     * 学生学籍辅号
      */
-    private Integer week;
-    /**
-     * 节次
-     */
-    private Integer Num;
-    /**
-     * cell里面存储的内容
-     */
-    private String cell;
+    private String stuNo1;
 
     public GoClassCourse getGoClassCourse() {
         return goClassCourse;
@@ -67,35 +58,19 @@ public class GoClassStudent  extends BaseEntity {
         this.name = name;
     }
 
-    public String getPoNumber() {
-        return poNumber;
+    public String getStuNo() {
+        return stuNo;
     }
 
-    public void setPoNumber(String poNumber) {
-        this.poNumber = poNumber;
+    public void setStuNo(String stuNo) {
+        this.stuNo = stuNo;
     }
 
-    public Integer getWeek() {
-        return week;
+    public String getStuNo1() {
+        return stuNo1;
     }
 
-    public void setWeek(Integer week) {
-        this.week = week;
-    }
-
-    public Integer getNum() {
-        return Num;
-    }
-
-    public void setNum(Integer num) {
-        Num = num;
-    }
-
-    public String getCell() {
-        return cell;
-    }
-
-    public void setCell(String cell) {
-        this.cell = cell;
+    public void setStuNo1(String stuNo1) {
+        this.stuNo1 = stuNo1;
     }
 }

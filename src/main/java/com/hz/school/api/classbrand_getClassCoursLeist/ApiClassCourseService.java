@@ -12,7 +12,7 @@ import java.util.List;
  */
 public class ApiClassCourseService {
     private static Logger log= Logger.getLogger(ApiClassCourseService.class);
-    public static List<ApiClassCourse>  generateList(List<TotalCourse> totalCourseList, List<GoClassCourse> goClassCourseList){
+    public static List<ApiClassCourse>  generateList(List<TotalCourse> totalCourseList){
         List<ApiClassCourse> apiClassCourseList =new ArrayList<ApiClassCourse>();
         
         for(TotalCourse totalCourse:totalCourseList){
@@ -34,26 +34,13 @@ public class ApiClassCourseService {
                 log.error("---------->>>>teacher is null,totalCourseId:"+totalCourse.getId());
             }
             api.setTimeInterval(totalCourse.getTimeInterval());
-            api.setType(1);
-            api.setWeekday(totalCourse.getWeekday());
-            apiClassCourseList.add(api);
-        }
-        for(GoClassCourse goClassCourse:goClassCourseList){
-            ApiClassCourse api =new ApiClassCourse();
-            api.setClassNum(goClassCourse.getClassNum());
-            ClassRoom classRoom=goClassCourse.getClassRoom();
-            if(classRoom==null){
-                log.error("----->>>>>>classRoom is null goClassCourseId:"+goClassCourse.getId());
+            Integer type=totalCourse.getType();
+            if(type==1){
+                api.setType(2);
             }else{
-                api.setClassid(goClassCourse.getClassRoom().getClassInfo().getId().toString());
+                api.setType(1);
             }
-            api.setCourseName(goClassCourse.getCourseName());
-            api.setCourseid(goClassCourse.getCourseid());
-            api.setTeacherName(goClassCourse.getTeacherName());
-            api.setTeacherid(goClassCourse.getTeacherid());
-            api.setTimeInterval(goClassCourse.getTimeInterval());
-            api.setType(2);
-            api.setWeekday(goClassCourse.getWeekday());
+            api.setWeekday(totalCourse.getWeekday());
             apiClassCourseList.add(api);
         }
         return apiClassCourseList;

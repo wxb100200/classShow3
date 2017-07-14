@@ -3,26 +3,26 @@ package com.hz.school.synchrony;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.avaje.ebean.Ebean;
-import com.hz.school.model.ClassInfo;
-import com.hz.school.model.CourseInfo;
-import com.hz.school.model.Teacher;
-import com.hz.school.model.TotalCourse;
+import com.hz.school.model.*;
 import com.hz.school.util.*;
 
 import java.io.IOException;
+import java.text.DecimalFormat;
 import java.util.*;
 
 /**
  * 教师：选修课学生信息之学生列表查询
  * 获取总课程表数据包括总行政课表和走班课表
  * refId表示：学期-第几周-班级id-星期几-第几节
+ * refId表示：学期id-教室id-日期-星期几-第几节
  */
 public class DynamicWeekCourse {
     private static Logger log= Logger.getLogger(DynamicWeekCourse.class);
     private static Map<String,TotalCourse> totalCourseMap= null;
-    private static Map<String,ClassInfo> classInfoMap= (Map<String,ClassInfo>) EbeanUtil.find(ClassInfo.class).where().setMapKey("className").findMap();
+    private static Map<String,TermInfo> termInfoMap=( Map<String,TermInfo>)EbeanUtil.find(TermInfo.class).where().select("id,termName").setMapKey("termName").findMap();
+    private static Map<String,ClassInfo> classInfoMap= (Map<String,ClassInfo>) EbeanUtil.find(ClassInfo.class).where().select("id,className").setMapKey("className").findMap();
     private static Map<String,CourseInfo> courseInfoMap=(Map<String,CourseInfo>) EbeanUtil.find(CourseInfo.class).where().setMapKey("courseName").findMap();
-    private static Map<String,Teacher> teacherMap=(Map<String,Teacher>) EbeanUtil.find(Teacher.class).where().setMapKey("name").findMap();
+    private static Map<String,Teacher> teacherMap=(Map<String,Teacher>) EbeanUtil.find(Teacher.class).where().select("id,name").setMapKey("name").findMap();
     private static String url="http://183.129.175.35:6690/xjzx/clientNcourse/clientClassAddressCourseAction!getDynamicWeekCourse";
     public static void main(String[] args){
         requestUrl();
@@ -51,16 +51,20 @@ public class DynamicWeekCourse {
         }
         String monday=jsonObject.getString("monday");
         String sunday=jsonObject.getString("sunday");
-        String termName=jsonObject.getString("termName");
+        String termName=jsonObject.getString("termName");//学期名
         String studySectionName=jsonObject.getString("studySectionName");
         log.info("------>>>>t:"+t+",monday:"+monday+",sunday:"+sunday+",termName"+termName+",studySectionName"+studySectionName);
+        TermInfo termInfo=termInfoMap.get(termName);
+        if(termInfo==null){
+            log.error("--->>>>在学期表中没有找到对应的学期名  termName:"+termName);
+            return;
+        }
         int numWeek=judgeWeekNum(monday);//第几周
-        String termNum=termName.substring(termName.indexOf("(")+1,termName.indexOf(")"));//第几学期
         TotalCourse temp=new TotalCourse();
         temp.setTermName(termName);
         temp.setNumWeek(numWeek);
         temp.setWeekInfo(monday+"-"+sunday);
-        String refId=termNum+"-"+numWeek+"-";
+        String refId=formatNum(termInfo.getId())+formatNum((long)numWeek);
         JSONArray jsonArray=jsonObject.getJSONArray("classCourse");
         for (Object obj : jsonArray) {
             if (obj == null) continue;
@@ -72,9 +76,12 @@ public class DynamicWeekCourse {
         JSONObject jsonObject=JSONObject.parseObject(data);
         String className=jsonObject.getString("className");
         ClassInfo classInfo=classInfoMap.get(className);
-        String classId=className.replaceAll("\\D+", "");
-        String refId=ref+classId+"-";
+        if(classInfo==null){
+            log.error("--->>>在班级信息表中没有找到班级名 className:"+className);
+            return;
+        }
         temp.setClassInfo(classInfo);
+        String refId=ref+formatNum(classInfo.getId());
         JSONArray jsonArray=jsonObject.getJSONArray("courseWeek");
         List<TotalCourse> totalCourses=new ArrayList<TotalCourse>();
         for (Object obj : jsonArray) {
@@ -96,16 +103,17 @@ public class DynamicWeekCourse {
         }
     }
 
-    private static TotalCourse parseOneCourse(String data,TotalCourse temp,String refId){
+    private static TotalCourse parseOneCourse(String data,TotalCourse temp,String ref){
         JSONObject jsonObject=JSONObject.parseObject(data);
         String classSection=jsonObject.getString("classSection");
         String courseName=jsonObject.getString("ncourseName");
         String section=jsonObject.getString("section");//节次1-12
-        String teacherName=jsonObject.getString("tchName");
+        String teacherName=jsonObject.getString("tchName").trim();
         String week=jsonObject.getString("week");//星期1-7
         String type=jsonObject.getString("choosCourse");//星期1-7
 
-        temp.setRefId(refId+week+"-"+section);
+        String refId=ref+formatNum(Long.parseLong(week))+formatNum(Long.parseLong(section));
+        temp.setRefId(refId);
         temp.setWeekday(Integer.parseInt(week));
         if(type.equals("1")){
             temp.setType(1);
@@ -173,5 +181,9 @@ public class DynamicWeekCourse {
         }else {
             return num-twoNum+1;
         }
+    }
+    private static String formatNum(Long num){
+        DecimalFormat df=new DecimalFormat("0000");
+        return df.format(num);
     }
 }

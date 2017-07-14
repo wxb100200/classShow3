@@ -83,12 +83,12 @@ public class StudentCourseDao {
                 num=Integer.parseInt(str.substring(0,str.indexOf(".")));
                 continue;
             }
-            GoClassStudent goClassStudent=generateGoClassStudent(obj,name,poNumber,num,i,student);
-            if(goClassStudent!=null) goClassStudentList.add(goClassStudent);
+//            GoClassStudent goClassStudent=generateGoClassStudent(obj,name,poNumber,num,i,student);
+//            if(goClassStudent!=null) goClassStudentList.add(goClassStudent);
         }
         return goClassStudentList;
     }
-    private static GoClassStudent generateGoClassStudent(Object obj, String name, String poNumber, int num, int i, Student student){
+    /*private static GoClassStudent generateGoClassStudent(Object obj, String name, String poNumber, int num, int i, Student student){
         log.info("-------------->>>>>>>>>>>>>obj:"+obj.toString().replaceAll("\\s*","")+"name:"+name+",poNumber:"+poNumber+",num:"+num+",i:"+i);
         String refId=poNumber+"-"+i+"-"+num;
         if(goClassStudentMap.containsKey(refId)){
@@ -114,7 +114,7 @@ public class StudentCourseDao {
             goClassStudent.setCell(obj.toString());
             return goClassStudent;
         }
-    }
+    }*/
     private static GoClassCourse generateGoClassCourse(Object obj, int num, int week){
         String str=obj.toString().replaceAll("\\s*","");
         String classRoomName=str.replaceAll(".*[^\\d](?=(\\d+))","");

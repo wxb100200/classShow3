@@ -2,7 +2,9 @@ package com.hz.school.model;
 
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import java.util.List;
 
 /**
  * 老师信息表
@@ -26,8 +28,8 @@ public class Teacher extends BaseEntity{
     /**
      * 卡
      */
-    @ManyToOne
-    private Card card;
+    @OneToMany(mappedBy = "teacher")
+    private List<Card> cards;
 
     public String getName() {
         return name;
@@ -45,19 +47,19 @@ public class Teacher extends BaseEntity{
         this.named = named;
     }
 
-    public Card getCard() {
-        return card;
-    }
-
-    public void setCard(Card card) {
-        this.card = card;
-    }
-
     public String getIconpath() {
         return iconpath;
     }
 
     public void setIconpath(String iconpath) {
         this.iconpath = iconpath;
+    }
+
+    public List<Card> getCards() {
+        return cards;
+    }
+
+    public void setCards(List<Card> cards) {
+        this.cards = cards;
     }
 }

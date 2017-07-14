@@ -469,9 +469,7 @@ public class ApiController {
         }
         List<TotalCourse> totalCourseList=EbeanUtil.find(TotalCourse.class).where().
                 eq("classInfo.classRoom.id",classroomid).eq("numWeek",currentWeek).findList();//根据当前时间获取第几周的课表
-        List<GoClassCourse> goClassCourseList=EbeanUtil.find(GoClassCourse.class).where().eq("classRoom.id",classroomid).findList();
-
-        List<ApiClassCourse> apiClassCourseList = ApiClassCourseService.generateList(totalCourseList,goClassCourseList);
+        List<ApiClassCourse> apiClassCourseList = ApiClassCourseService.generateList(totalCourseList);
         return ApiResult.list("classbrand_getClassCourseList", apiClassCourseList).toJson();
     }
     /**

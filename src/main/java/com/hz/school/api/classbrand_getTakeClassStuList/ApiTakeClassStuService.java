@@ -34,7 +34,7 @@ public class ApiTakeClassStuService {
             Student student=goClassStudent.getStudent();
             if(student==null)continue;
             ApiStudent apiStudent=new ApiStudent();
-            Card card=student.getCard();
+            Card card=student.getCards().get(0);
             if(card!=null){
                 apiStudent.setCard(card.getCardNo());
             }

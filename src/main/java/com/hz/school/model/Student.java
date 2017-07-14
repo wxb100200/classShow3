@@ -1,12 +1,11 @@
 package com.hz.school.model;
 
-
 import javax.persistence.*;
 import java.math.BigDecimal;
 import java.util.List;
 
 /**
- * 班级信息表
+ * 学生信息表
  */
 @Entity
 @Table(name =Constant.DB_PREFIX+"student")
@@ -23,7 +22,6 @@ public class Student extends BaseEntity{
      * 当前使用的卡号
      */
     private String cardNo;
-
     /**
      * 排序号
      */
@@ -65,17 +63,16 @@ public class Student extends BaseEntity{
      */
     @OneToMany(mappedBy = "student")
     private List<Parent> parentList;
-
+    /**
+     * 卡
+     */
+    @OneToMany(mappedBy = "student")
+    private List<Card> cards;
     /**
      * 班级
      */
     @ManyToOne
     private ClassInfo classInfo;
-    /**
-     * 卡
-     */
-    @ManyToOne
-    private Card card;
 
     public String getName() {
         return name;
@@ -91,6 +88,22 @@ public class Student extends BaseEntity{
 
     public void setStuNo(String stuNo) {
         this.stuNo = stuNo;
+    }
+
+    public String getCardNo() {
+        return cardNo;
+    }
+
+    public void setCardNo(String cardNo) {
+        this.cardNo = cardNo;
+    }
+
+    public Integer getOrder() {
+        return order;
+    }
+
+    public void setOrder(Integer order) {
+        this.order = order;
     }
 
     public Integer getSex() {
@@ -157,35 +170,19 @@ public class Student extends BaseEntity{
         this.parentList = parentList;
     }
 
+    public List<Card> getCards() {
+        return cards;
+    }
+
+    public void setCards(List<Card> cards) {
+        this.cards = cards;
+    }
+
     public ClassInfo getClassInfo() {
         return classInfo;
     }
 
     public void setClassInfo(ClassInfo classInfo) {
         this.classInfo = classInfo;
-    }
-
-    public String getCardNo() {
-        return cardNo;
-    }
-
-    public void setCardNo(String cardNo) {
-        this.cardNo = cardNo;
-    }
-
-    public Integer getOrder() {
-        return order;
-    }
-
-    public void setOrder(Integer order) {
-        this.order = order;
-    }
-
-    public Card getCard() {
-        return card;
-    }
-
-    public void setCard(Card card) {
-        this.card = card;
     }
 }

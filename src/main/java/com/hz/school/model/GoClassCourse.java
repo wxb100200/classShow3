@@ -10,39 +10,30 @@ import java.util.List;
 @Table(name = Constant.DB_PREFIX+"go_class_course")
 public class GoClassCourse  extends BaseEntity {
     /**
-     * 第几节课
+     * 学期
      */
-    private Integer classNum;
-
+    private String termName;
     /**
-     * 课程名称
+     * 教室名称
      */
-    private String courseName;
+    private String classRoomName;
     /**
-     * 课程id
+     * 教室
      */
-    private Long courseid;
+    @ManyToOne
+    private ClassRoom classRoom;
     /**
-     * 教师姓名
+     * 日期
      */
-    private String teacherName;
-    /**
-     * 教师id
-     */
-    private Long teacherid;
-    /**
-     * 时段
-     * 1：上午；2：下午
-     */
-    @Column(length = 1)
-    private Integer timeInterval;
+    private Long date;
     /**
      * 周几
      */
     private Integer weekday;
-
-    @ManyToOne
-    private ClassRoom classRoom;
+    /**
+     * 第几节课
+     */
+    private Integer classNum;
 
     /**
      * 关联的学生
@@ -50,52 +41,36 @@ public class GoClassCourse  extends BaseEntity {
     @OneToMany(mappedBy = "goClassCourse")
     private List<GoClassStudent> goClassStudents;
 
-    public Integer getClassNum() {
-        return classNum;
+    public String getTermName() {
+        return termName;
     }
 
-    public void setClassNum(Integer classNum) {
-        this.classNum = classNum;
+    public void setTermName(String termName) {
+        this.termName = termName;
     }
 
-    public String getCourseName() {
-        return courseName;
+    public String getClassRoomName() {
+        return classRoomName;
     }
 
-    public void setCourseName(String courseName) {
-        this.courseName = courseName;
+    public void setClassRoomName(String classRoomName) {
+        this.classRoomName = classRoomName;
     }
 
-    public Long getCourseid() {
-        return courseid;
+    public ClassRoom getClassRoom() {
+        return classRoom;
     }
 
-    public void setCourseid(Long courseid) {
-        this.courseid = courseid;
+    public void setClassRoom(ClassRoom classRoom) {
+        this.classRoom = classRoom;
     }
 
-    public String getTeacherName() {
-        return teacherName;
+    public Long getDate() {
+        return date;
     }
 
-    public void setTeacherName(String teacherName) {
-        this.teacherName = teacherName;
-    }
-
-    public Long getTeacherid() {
-        return teacherid;
-    }
-
-    public void setTeacherid(Long teacherid) {
-        this.teacherid = teacherid;
-    }
-
-    public Integer getTimeInterval() {
-        return timeInterval;
-    }
-
-    public void setTimeInterval(Integer timeInterval) {
-        this.timeInterval = timeInterval;
+    public void setDate(Long date) {
+        this.date = date;
     }
 
     public Integer getWeekday() {
@@ -106,12 +81,12 @@ public class GoClassCourse  extends BaseEntity {
         this.weekday = weekday;
     }
 
-    public ClassRoom getClassRoom() {
-        return classRoom;
+    public Integer getClassNum() {
+        return classNum;
     }
 
-    public void setClassRoom(ClassRoom classRoom) {
-        this.classRoom = classRoom;
+    public void setClassNum(Integer classNum) {
+        this.classNum = classNum;
     }
 
     public List<GoClassStudent> getGoClassStudents() {

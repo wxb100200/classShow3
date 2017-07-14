@@ -172,6 +172,12 @@ public class DateUtil {
         }
         return formatDate(date, C_DATE_PATTON_YEAR);
     }
+    public static String formatDateToMonthDay(Date date){
+        if (null == date) {
+            return "";
+        }
+        return formatDate(date, C_DATE_PATTON_MONTH_DAY);
+    }
 
     /**
      * 指定日期取出格式

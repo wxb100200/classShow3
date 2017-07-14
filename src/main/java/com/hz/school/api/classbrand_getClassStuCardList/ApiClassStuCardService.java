@@ -18,7 +18,7 @@ public class ApiClassStuCardService {
         List<ApiCardInfo> apiList=new ArrayList<ApiCardInfo>();
         for(Student data:dataList){
             ApiCardInfo api=new ApiCardInfo();
-            Card card=data.getCard();
+            Card card=data.getCards().get(0);
             if(card!=null){
                 api.setBalance(card.getBalance().toString());
                 api.setCard(card.getCardNo());
@@ -33,7 +33,7 @@ public class ApiClassStuCardService {
         List<ApiTeacher> apiList=new ArrayList<ApiTeacher>();
         for(Teacher data:dataList){
             ApiTeacher api=new ApiTeacher();
-            Card card=data.getCard();
+            Card card=data.getCards().get(0);
             if(card!=null){
                 api.setBalance(card.getBalance().toString());
                 api.setCard(card.getCardNo());
