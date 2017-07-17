@@ -1,5 +1,6 @@
 package com.hz.school;
 
+import com.hz.school.http.HttpServer;
 import com.hz.school.util.Logger;
 import org.quartz.*;
 import org.quartz.impl.StdSchedulerFactory;
@@ -19,5 +20,7 @@ public class ApplicationMain {
         } catch (SchedulerException e) {
             e.printStackTrace();
         }
+
+        new HttpServer().start();
     }
 }

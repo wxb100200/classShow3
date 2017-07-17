@@ -624,8 +624,48 @@ public class DateUtil {
         return calendar.get(Calendar.WEEK_OF_YEAR);
     }
 
-    public static void main(String[] args) {
-        System.out.println(betweenOfDay(System.currentTimeMillis(), 1414054578859L));
+    /**
+     * 获得当前日期与本周一相差的天数
+     */
+    private static int getMondayPlus(){
+        Calendar cd = Calendar.getInstance();
+        // 获得今天是一周的第几天，星期日是第一天，星期二是第二天......
+        int dayOfWeek = cd.get(Calendar.DAY_OF_WEEK);
+        if (dayOfWeek == 1) {
+            return -6;
+        } else {
+            return 2 - dayOfWeek;
+        }
+    }
+    /**
+     *获得本周星期一的日期
+     */
+    public static Long getCurrentMonday() throws ParseException {
+        int mondayPlus = getMondayPlus();
+        GregorianCalendar currentDate = new GregorianCalendar();
+        currentDate.add(GregorianCalendar.DATE, mondayPlus);
+        Date monday = currentDate.getTime();
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        String sDate = simpleDateFormat.format(monday);
+        return simpleDateFormat.parse(sDate).getTime();
+    }
+    /**
+     * 获取当前周下周一的日期
+     */
+    public static Long getCurrentNextMonday() throws ParseException {
+        int mondayPlus = getMondayPlus()+7;
+        GregorianCalendar currentDate = new GregorianCalendar();
+        currentDate.add(GregorianCalendar.DATE, mondayPlus);
+        Date sunday = currentDate.getTime();
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        String sDate = simpleDateFormat.format(sunday);
+        return simpleDateFormat.parse(sDate).getTime();
+    }
+
+
+    public static void main(String[] args) throws ParseException {
+        System.out.println(getCurrentMonday());
+        System.out.println(getCurrentNextMonday());
     }
 
 
