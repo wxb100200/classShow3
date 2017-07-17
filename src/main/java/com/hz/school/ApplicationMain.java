@@ -20,7 +20,6 @@ public class ApplicationMain {
         } catch (SchedulerException e) {
             e.printStackTrace();
         }
-
         new HttpServer().start();
     }
 }

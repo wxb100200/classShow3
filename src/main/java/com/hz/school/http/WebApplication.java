@@ -3,6 +3,7 @@ package com.hz.school.http;
 import com.hz.school.http.common.Common;
 import com.hz.school.http.common.CommonUtil;
 
+
 /**
  * 
  * <p>Title:WebApplication</p>
@@ -20,18 +21,13 @@ public class WebApplication {
 		Common common= CommonUtil.getCommon();
 		GenericServlet servlet=null;
 		if(common.getTotalCourse()){
-			try {
-				Thread.sleep( 5* 1000);
-				getServlet(url);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
+			getServlet(url);
 		}else {
 			System.out.println("--->>>url:" + url);
 			String clz="";
-			if(clz.contains("classbrand_getClassCourseList")){
+			if("classbrand_getClassCourseList".contains(clz)){
 				clz="com.hz.school.http.servlet.GetClassCourseList";
-			}else if(clz.contains("classbrand_getTakeClassStuList")){
+			}else if("classbrand_getTakeClassStuList".contains(clz)){
 				clz="com.hz.school.http.servlet.GetTakeClassStuList";
 			}
 			Class<?> clazz = Class.forName(clz);
