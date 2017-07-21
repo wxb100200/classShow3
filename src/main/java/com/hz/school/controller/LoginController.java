@@ -1,6 +1,8 @@
 package com.hz.school.controller;
 
+import com.hz.school.model.Student;
 import com.hz.school.resource.LoginResource;
+import com.hz.school.util.EbeanUtil;
 import com.hz.school.util.Logger;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -24,7 +26,7 @@ public class LoginController {
     /**
      * 登录页面
      */
-    @RequestMapping(value="/loginRequest",method= RequestMethod.POST)
+    /*@RequestMapping(value="/loginRequest",method= RequestMethod.POST)
     public String loginRequest(String name,String password){
         log.info("--->>>>name:"+name+",password:"+password);
         String message= LoginResource.findAccount(name,password);
@@ -33,6 +35,13 @@ public class LoginController {
         }else {
             return "login/login";
         }
+    }*/
+    @RequestMapping(value="/loginRequest",method= RequestMethod.POST)
+    public String loginRequest(String name,String password,ModelMap model){
+        log.info("--->>>>name:"+name+",password:"+password);
+        Student s= EbeanUtil.find(Student.class,1l);
+        model.addAttribute(s);
+        return "index";
     }
     /**
      * 注册页面

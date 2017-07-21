@@ -10,7 +10,10 @@
 
    </head>
 
-   <body>hello ${message}!
+   <body>
+   hello ${message}!<br/>
+   name:${student.name}<br/>
+   className:${student.classInfo.className}<br/>
 
 
 
